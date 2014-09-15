@@ -1,5 +1,10 @@
 module GP
 
-# package code goes here
+include("tree.jl")
+include("util.jl")
+include("init.jl")
+include("pop.jl")
+include("ops.jl")
+include("math.jl")
 
 end # module
