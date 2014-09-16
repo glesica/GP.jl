@@ -1,40 +1,65 @@
 # Syntax tree data structure support
 
-export Func, Const, ConstRange, State, Binds, Var, EmptyState
-export evaluate, symbol
+export Tree, Func, Term, Const, State, ArgList, FuncType,
+       Bindings, EmptyState, Var
+export evaluate, functypes, terms, consts
 
-abstract Node
-typealias NodeSet Vector{Node}
-
-abstract Func <: Node
-# FIXME This is super gross because the user can pass ANY data type
-typealias FuncSet Vector{DataType}
-
-abstract Term <: Node
-typealias TermSet{T<:Term} Vector{T}
-
+abstract Tree
+abstract Func <: Tree
+abstract Term <: Tree
 abstract Const <: Term
-abstract ConstRange
-typealias ConstSet{T<:Const, U<:ConstRange} Union(Vector{T}, U)
-
-typealias Binds Dict{String}{Const}
 abstract State
+
+typealias ArgList{N} NTuple{N,Tree}
+typealias FuncType{T<:Func} Type{T}
+typealias Bindings Dict{String}{Tree}
+typealias FuncTypes{N} NTuple{N,Func}
+typealias Terms{N} NTuple{N,Term}
+typealias Consts{N} NTuple{N,Const}
+
 immutable EmptyState <: State
 end
 
-# TODO This will need to change once variables can have types
-immutable Var <: Term
+immutable Var <: Const
     sym::String
 end
-typealias VarSet Vector{Var}
+typealias Vars{N} NTuple{N,Var}
 
-function evaluate(r::Var, b::Binds, s::State) evaluate(b[r.sym], b, s) end
-function symbol(r::Var) r.sym end
+evaluate(t::Tree) = evaluate(t, Bindings(), EmptyState())
+evaluate(t::Tree, b::Bindings) = evaluate(t, b, EmptyState())
+evaluate(t::Tree, s::State) = evaluate(t, Bindings(), s)
+evaluate(t::Const, b::Bindings, s::State) = t.val
+evaluate(t::Var, b::Bindings, s::State) = evaluate(b[t.sym], b, s)
 
-function evaluate(r::Const, b::Binds, s::State) r.val end
-function symbol(r::Const) string(r.val) end
+function functypes(fs::DataType...)
+    ntuple(length(fs)) do i
+        f = fs[i]
+        @assert f <: Func
+        f
+    end
+end
 
-function evaluate(r::Node) evaluate(r, Binds(), EmptyState()) end
-function evaluate(r::Node, b::Binds) evaluate(r, b, EmptyState()) end
-function evaluate(r::Node, s::State) evaluate(r, Binds(), s) end
-function symbol(r::Node) typeof(r) |> string end
+# TODO Build all of these using a macro or generalize into a single function?
+function terms(ts...)
+    ntuple(length(ts)) do i
+        t = ts[i]
+        @assert typeof(t) <: Term
+        t
+    end
+end
+
+function consts(cs...)
+    ntuple(length(cs)) do i
+        c = cs[i]
+        @assert typeof(c) <: Const
+        c
+    end
+end
+
+function vars(vs...)
+    ntuple(length(vs)) do i
+        v = vs[i]
+        @assert typeof(v) <: Var
+        v
+    end
+end

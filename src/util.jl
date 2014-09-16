@@ -14,7 +14,7 @@ function maxdepth(t::Term) 0 end
 # FIXME Due to the Julia comparison semantics for immutable objects, this
 # function can't tell the difference between two identical subtrees, so it will
 # replace all of them.
-function replacesubtree(r::Func, oldst::Node, newst::Node)
+function replacesubtree(r::Func, oldst::Tree, newst::Tree)
     if is(r, oldst)
         return newst
     end
@@ -28,7 +28,7 @@ function replacesubtree(r::Func, oldst::Node, newst::Node)
     rtype = typeof(r)
     return rtype(rargs...)
 end
-function replacesubtree(r::Term, oldst::Node, newst::Node)
+function replacesubtree(r::Term, oldst::Tree, newst::Tree)
     if is(r, oldst)
         return newst
     else
@@ -38,12 +38,12 @@ end
 
 # Choose a random subtree
 function randsubtree(r::Func, funcprob::Float64)
-    node::Node
+    node::Tree
 
     funcs = Stack(Func)
     terms = Stack(Term)
 
-    stack = Stack(Node)
+    stack = Stack(Tree)
     push!(stack, r)
     while length(stack) > 0
         current = pop!(stack)

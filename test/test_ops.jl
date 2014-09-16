@@ -2,8 +2,8 @@
 
 using GP
 
-funcs = [Sum, Diff, Prod]
-terms = [Num(3), Num(4)]
+funcs = functypes(Sum, Diff, Prod)
+terms = terms(Num(3), Num(4))
 
 srand(0)
 t1 = Sum(Num(1), Diff(Num(1), Num(2)))

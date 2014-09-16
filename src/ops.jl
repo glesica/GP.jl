@@ -7,24 +7,25 @@ export mutsubtree, mutpoint, crosssubtree
 function mutsubtree()
 end
 
-# TODO Handle different arities in funcs
-function mutpoint(r::Func, funcs::FuncSet, terms::TermSet, mutprob::Float64)
-    if rand() < mutprob
-        newfunc = sample(funcs)
-    else
-        newfunc = typeof(r)
+function mutpoint(t::Func, funcs::FuncTypes, terms::Terms, mutprob::Float64)
+    matchfuncs = filter(funcs) do f
+        arity(f) == arity(typeof(t))
     end
-    newargs = [mutpoint(c, funcs, terms, mutprob) for c=r.args]
-    newfunc(newargs...)
+    if rand() < mutprob
+        func = sample(matchfuncs)
+    else
+        func = typeof(f)
+    end
+    subtrees = [mutpoint(st, funcs, terms, mutprob) for st=t.args]
+    func(subtrees...)
 end
-
-function mutpoint(r::Term, funcs::FuncSet, terms::TermSet, mutprob::Float64)
+function mutpoint(t::Term, funcs::FuncTypes, terms::Terms, mutprob::Float64)
     if rand() < mutprob
-        newterm = sample(terms)
+        term = sample(terms)
     else
-        newterm = r
+        term = t
     end
-    newterm
+    term
 end
 
 function crosssubtree(r1::Func, r2::Func)
