@@ -1,5 +1,7 @@
 # Population creation.
 
+export popfull, popgrow, poprampedhh
+
 function popfull(n::Int64, funcs::FuncTypes, consts::Consts, vars::Vars, maxdepth::Int64)
     [treefull(funcs, consts, vars, maxdepth) for _=1:n]
 end

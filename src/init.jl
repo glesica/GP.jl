@@ -1,7 +1,5 @@
 # Population initialization.
 
-import StatsBase.sample
-
 export treefull, treegrow
 
 # Builds a random tree using the "full" method
@@ -12,14 +10,14 @@ function treefull(funcs::FuncTypes, consts::Consts, vars::Vars, maxdepth::Int64)
     varprob = numvars / (numvars + 1) # 1 for the ephemeral constant
 
     if maxdepth > 0
-        func = sample(funcs)
+        func = funcs[rand(1:end)]
         subtrees = [treefull(funcs, consts, vars, maxdepth-1) for _=1:arity(func)]
-        tree = func(subtress...)
+        tree = func(subtrees...)
     else
         if rand() < varprob
-            tree = sample(vars)
+            tree = vars[rand(1:end)]
         else
-            tree = sample(consts)
+            tree = consts[rand(1:end)]
         end
     end
     tree
@@ -37,14 +35,14 @@ function treegrow(funcs::FuncTypes, consts::Consts, vars::Vars, maxdepth::Int64)
     varprob = numvars / (numvars + 1)
 
     if maxdepth > 0 && rand() < funcprob
-        func = sample(funcs)
+        func = funcs[rand(1:end)]
         subtrees = [treegrow(funcs, consts, vars, maxdepth-1) for _=1:arity(func)]
         tree = func(subtrees...)
     else
         if rand() < varprob
-            tree = sample(vars)
+            tree = vars[rand(1:end)]
         else
-            tree = sample(consts)
+            tree = consts[rand(1:end)]
         end
     end
     tree

@@ -2,7 +2,7 @@
 
 export Tree, Func, Term, Const, State, ArgList, FuncType,
        Bindings, EmptyState, Var
-export evaluate, functypes, terms, consts
+export evaluate, arity, functypes, terms, consts, vars
 
 abstract Tree
 abstract Func <: Tree
@@ -13,7 +13,7 @@ abstract State
 typealias ArgList{N} NTuple{N,Tree}
 typealias FuncType{T<:Func} Type{T}
 typealias Bindings Dict{String}{Tree}
-typealias FuncTypes{N} NTuple{N,Func}
+typealias FuncTypes{N} NTuple{N,DataType}
 typealias Terms{N} NTuple{N,Term}
 typealias Consts{N} NTuple{N,Const}
 
@@ -30,6 +30,9 @@ evaluate(t::Tree, b::Bindings) = evaluate(t, b, EmptyState())
 evaluate(t::Tree, s::State) = evaluate(t, Bindings(), s)
 evaluate(t::Const, b::Bindings, s::State) = t.val
 evaluate(t::Var, b::Bindings, s::State) = evaluate(b[t.sym], b, s)
+
+arity(t::Func) = length(t.args)
+arity(t::Term) = 0
 
 function functypes(fs::DataType...)
     ntuple(length(fs)) do i

@@ -6,45 +6,45 @@ export replacesubtree
 
 # Return the maximum depth of a given program tree.
 function maxdepth(f::Func)
-    maximum(1 + [maxdepth(getfield(f, a)) for a=funcargs(f)])
+    maximum(1 + [maxdepth(t) for t=f.args])
 end
-
 function maxdepth(t::Term) 0 end
 
-# FIXME Due to the Julia comparison semantics for immutable objects, this
-# function can't tell the difference between two identical subtrees, so it will
-# replace all of them.
-function replacesubtree(r::Func, oldst::Tree, newst::Tree)
-    if is(r, oldst)
+
+# Find a given subtree within the parse tree and replace it with another given
+# parse tree.
+function replacesubtree(t::Func, oldst::Tree, newst::Tree)
+    # FIXME Due to the Julia comparison semantics for immutable objects, this
+    # function can't tell the difference between two identical subtrees, so it will
+    # replace all of them.
+    if is(t, oldst)
         return newst
     end
     # TODO We might be able to optimize this by checking if the result of the
     # recursive call is identical to the original and re-using the original,
     # but not sure it would actually save memory since immutables are copied on
     # call.
-    rargs = map(r.args) do arg
+    targs = map(t.args) do arg
         replacesubtree(arg, oldst, newst)
     end
-    rtype = typeof(r)
-    return rtype(rargs...)
+    ttype = typeof(t)
+    ttype(targs...)
 end
-function replacesubtree(r::Term, oldst::Tree, newst::Tree)
-    if is(r, oldst)
+function replacesubtree(t::Term, oldst::Tree, newst::Tree)
+    if is(t, oldst)
         return newst
     else
-        return r
+        return t
     end
 end
 
-# Choose a random subtree
-function randsubtree(r::Func, funcprob::Float64)
-    node::Tree
 
+# Choose a random subtree from a parse tree and return it.
+function randsubtree(t::Func, funcprob::Float64)
     funcs = Stack(Func)
     terms = Stack(Term)
-
     stack = Stack(Tree)
-    push!(stack, r)
+    push!(stack, t)
     while length(stack) > 0
         current = pop!(stack)
 
@@ -56,11 +56,8 @@ function randsubtree(r::Func, funcprob::Float64)
             error("Invalid tree element")
         end
 
-        for field = names(current)
-            if !beginswith(string(field), "arg")
-                continue
-            end
-            push!(stack, getfield(current, field))
+        for arg = current.args
+            push!(stack, arg)
         end
     end
 
@@ -77,18 +74,8 @@ function randsubtree(r::Func, funcprob::Float64)
         pop!(found)
     end
 
-    node = pop!(found)
-    return node
+    pop!(found)
 end
-function randsubtree(r::Term, funcprob::Float64)
-    # TODO Should we still pick whether to return a func or term and then error
-    # if we choose func? That seems like it would be brittle and create tricky
-    # bugs, this way seems better in that sense.
-    if funcprob == 1.0
-        error("No valid nodes to return")
-    end
-    return r
-end
-function randsubtree(r::Term)
-    randsubtree(r, 0.0)
+function randsubtree(t::Term, funcprob::Float64)
+    t
 end

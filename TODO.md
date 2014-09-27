@@ -8,3 +8,4 @@
   * Consider using a macro for creating new functions and constant types. This
     would allow more complex constructors to be created that would, for example,
     set the arity of the function as a field.
+  * Think about adding "return types" to functions to allow mixed-type GPs.
