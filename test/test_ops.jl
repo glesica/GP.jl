@@ -1,14 +1,23 @@
 # Tests for evolutionary operators.
 
+using Base.Test
 using GP
 
-funcs = functypes(Sum, Diff, Prod)
-terms = terms(Num(3), Num(4))
+const fs = functypes(Sum, Diff)
+const cs = consts(Num(3), Num(4))
+const vs = vars()
+const ts = terms(Num(3), Num(4))
+
+const t1 = Sum(Num(1), Diff(Num(1), Num(2)))
 
 srand(0)
-t1 = Sum(Num(1), Diff(Num(1), Num(2)))
-t1_mut1 = mutpoint(t1, funcs, terms, 0.5)
-t1_mut2 = mutpoint(t1_mut1, funcs, terms, 0.5)
+t1_ptmut1 = mutpoint(t1, fs, ts, 0.5)
+@test t1_ptmut1 == Sum(Num(1),Diff(Num(3),Num(4)))
 
-@test t1_mut1 == Sum(Num(1),Diff(Num(3),Num(3)))
-@test t1_mut2 == Sum(Num(3),Diff(Num(3),Num(3)))
+srand(1)
+t1_ptmut2 = mutpoint(t1_ptmut1, fs, ts, 0.5)
+@test t1_ptmut2 == Sum(Num(4),Sum(Num(3),Num(4)))
+
+srand(0)
+t1_stmut1 = mutsubtree(t1, fs, cs, vs, 1.0)
+@test t1_stmut1 == Sum((Num(1),Diff((Num(3),Num(4)))))
