@@ -20,4 +20,4 @@ t1_ptmut2 = mutpoint(t1_ptmut1, fs, ts, 0.5)
 
 srand(0)
 t1_stmut1 = mutsubtree(t1, fs, cs, vs, 1.0)
-@test t1_stmut1 == Sum((Num(1),Diff((Num(3),Num(4)))))
+@test t1_stmut1 == Sum(Num(1),Diff(Num(3),Num(4)))
