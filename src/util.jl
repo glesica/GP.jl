@@ -2,7 +2,7 @@
 
 using DataStructures
 
-export replacesubtree
+export maxdepth, replacesubtree, randsubtree
 
 # Return the maximum depth of a given program tree.
 function maxdepth(f::Func)
@@ -50,14 +50,13 @@ function randsubtree(t::Func, funcprob::Float64)
 
         if typeof(current) <: Func
             push!(funcs, current)
+            for arg = current.args
+                push!(stack, arg)
+            end
         elseif typeof(current) <: Term
             push!(terms, current)
         else
             error("Invalid tree element")
-        end
-
-        for arg = current.args
-            push!(stack, arg)
         end
     end
 
