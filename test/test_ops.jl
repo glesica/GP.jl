@@ -3,12 +3,12 @@
 using Base.Test
 using GP
 
-const fs = functypes(Sum, Diff)
-const cs = consts(Num(3), Num(4))
-const vs = vars()
-const ts = terms(Num(3), Num(4))
+fs = functypes(Sum, Diff)
+cs = consts(Num(3), Num(4))
+vs = vars()
+ts = terms(Num(3), Num(4))
 
-const t1 = Sum(Num(1), Diff(Num(1), Num(2)))
+t1 = Sum(Num(1), Diff(Num(1), Num(2)))
 
 srand(0)
 t1_ptmut1 = mutpoint(t1, fs, ts, 0.5)

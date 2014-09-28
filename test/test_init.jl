@@ -3,9 +3,9 @@
 using Base.Test
 using GP
 
-const fs = functypes(Sum, Diff)
-const cs = consts(Num(1), Num(2))
-const vs = vars(Var('x'), Var('y'))
+fs = functypes(Sum, Diff)
+cs = consts(Num(1), Num(2))
+vs = vars(Var('x'), Var('y'))
 
 srand(0)
 tf1 = treefull(fs, cs, vs, 2)
