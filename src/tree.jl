@@ -21,7 +21,7 @@ immutable EmptyState <: State
 end
 
 immutable Var <: Const
-    sym::String
+    sym::Char
 end
 typealias Vars{N} NTuple{N,Var}
 
