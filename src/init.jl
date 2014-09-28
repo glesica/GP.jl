@@ -2,7 +2,11 @@
 
 export treefull, treegrow
 
-# Builds a random tree using the "full" method
+# ------------------------------------------------------------------------------
+# Full method
+# Builds a random tree using the "full" method.
+# ------------------------------------------------------------------------------
+
 function treefull(funcs::FuncTypes, consts::Consts, vars::Vars, maxdepth::Int64)
     tree::Tree
 
@@ -22,8 +26,15 @@ function treefull(funcs::FuncTypes, consts::Consts, vars::Vars, maxdepth::Int64)
     end
     tree
 end
+function treefull(funcs::FuncTypes, consts::Consts, maxdepth::Int64)
+    treefull(funcs, consts, vars(), maxdepth)
+end
 
-# Builds a random tree using the "grow" method
+# ------------------------------------------------------------------------------
+# Grow method
+# Builds a random tree using the "grow" method.
+# ------------------------------------------------------------------------------
+
 function treegrow(funcs::FuncTypes, consts::Consts, vars::Vars, maxdepth::Int64)
     tree::Tree
 
@@ -46,4 +57,7 @@ function treegrow(funcs::FuncTypes, consts::Consts, vars::Vars, maxdepth::Int64)
         end
     end
     tree
+end
+function treegrow(funcs::FuncTypes, consts::Consts, maxdepth::Int64)
+    treegrow(funcs, consts, vars(), maxdepth)
 end
